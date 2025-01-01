@@ -35,13 +35,17 @@ const game = (function () {
     if (boardUpdated) {
       if (checkBoard(getCurrentPlayer().getMarker())) {
         setWinner(currentPlayerIdx);
+        console.log(`${getCurrentPlayer().getName()} won!`);
+      } else if (updateCount === 9) {
+        console.log('tie');
+      } else {
+        updateCurrentPlayer();
       }
-      updateCurrentPlayer();
     }
   }
 
   const updateBoard = (marker, position) => {
-    if (getPositionValidity(position)) {
+    if (getPositionValidity(position) && winner === null) {
       board[position[0]][position[1]] = marker;
       incUpdateCount();
       console.log('Board updated');
@@ -134,6 +138,11 @@ const game = (function () {
     }
   };
 
+  const resetGame = () => {
+    setWinner(null);
+    resetBoard();
+  }
+
   const resetBoard = () => {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
@@ -156,8 +165,17 @@ const game = (function () {
            currentPlayerTurn, 
            getBoard, 
            printBoard, 
-           resetBoard };
+           resetGame };
 })();
 
-// const game = createGame();
-console.log(game.player1.getName());
+game.currentPlayerTurn([1,1]);
+game.currentPlayerTurn([0,1]);
+game.currentPlayerTurn([0,1]);
+game.currentPlayerTurn([1,0]);
+game.currentPlayerTurn([2,1]);
+game.currentPlayerTurn([1,2]);
+game.currentPlayerTurn([0,2]);
+game.resetGame();
+game.printBoard();
+game.currentPlayerTurn([1,1]);
+game.currentPlayerTurn([0,1]);
