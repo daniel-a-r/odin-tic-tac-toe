@@ -14,20 +14,34 @@ function createPlayer(name, marker) {
   return { setMarker, getMarker, getName, setName };
 }
 
-function createGame() {
+const game = (function () {
   const player1 = createPlayer('Player 1', 'x');
   const player2 = createPlayer('Player 2', 'o');
   const playersArray = [player1, player2];
   let currentPlayerIdx = 0;
+  let winner = null;
+  let updateCount = 0;
 
   const board = [[null, null, null],
                  [null, null, null],
                  [null, null, null]];
 
+  const currentPlayerTurn = (position) => {
+    const boardUpdated = updateBoard(getCurrentPlayer().getMarker(), position);
+    if (boardUpdated) {
+      updateCurrentPlayer();
+    }
+  }
+
   const updateBoard = (marker, position) => {
     if (getPositionValidity(position)) {
       board[position[0]][position[1]] = marker;
+      incUpdateCount();
+      console.log('Board updated');
+      printBoard();
+      return true;
     }
+    return false;
   };
 
   const getPositionValidity = (position) => {
@@ -48,6 +62,62 @@ function createGame() {
 
     return true;
   };
+
+  const incUpdateCount = () => updateCount++;
+
+  const checkBoard = (marker) => {
+    if (checkRow(marker) || checkColumn(marker) || checkDiagonal(marker)) return true;
+    return false;
+  }
+
+  // [0][0] -> [0][1] -> [0][2]
+  const checkRow = (marker) => {
+    for (let i = 0; i < board.length; i++) {
+      let matchCount = 0;
+      for (let j = 0; j < board.length; j++) {
+        if (board[i][j] === marker) {
+          matchCount++;
+        }
+      }
+      if (matchCount === 3) return true;
+    }
+    return false;
+  }
+
+  // [0][0] -> [1][0] -> [2][0]
+  const checkColumn = (marker) => {
+    for (let i = 0; i < board.length; i++) {
+      let matchCount = 0;
+      for (let j = 0; j < board.length; j++) {
+        if (board[j][i] === marker) {
+          matchCount++;
+        }
+      }
+      if (matchCount === 3) return true;
+    }
+    return false;
+  }
+
+  // [0][0] -> [1][1] -> [2][2]
+  // [2][0] -> [1][1] -> [0][2]
+  const checkDiagonal = (marker) => {
+    let matchCount = 0;
+    for (let i = 0; i < board.length; i++) {
+      if (board[i][i] === marker) {
+        matchCount++;
+      }
+    }
+    if (matchCount === 3) return true;
+    matchCount = 0;
+    for (let i = 0; i < board.length; i++) {
+      const row = board.length - 1 - i;
+      if (board[row][i] === marker) {
+        matchCount++;
+      }
+    }
+    if (matchCount === 3) return true;
+    return false;
+  }
   
   const getBoard = () => board;
 
@@ -76,12 +146,11 @@ function createGame() {
   return { player1, 
            player2,
            getCurrentPlayer,
-           updateCurrentPlayer,
-           updateBoard, 
+           currentPlayerTurn, 
            getBoard, 
            printBoard, 
            resetBoard };
-}
+})();
 
-const game = createGame();
+// const game = createGame();
 console.log(game.player1.getName());
