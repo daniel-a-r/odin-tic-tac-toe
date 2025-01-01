@@ -26,9 +26,16 @@ const game = (function () {
                  [null, null, null],
                  [null, null, null]];
 
+  const setWinner = (winnerIndx) => {
+    winner = winnerIndx;
+  }
+
   const currentPlayerTurn = (position) => {
     const boardUpdated = updateBoard(getCurrentPlayer().getMarker(), position);
     if (boardUpdated) {
+      if (checkBoard(getCurrentPlayer().getMarker())) {
+        setWinner(currentPlayerIdx);
+      }
       updateCurrentPlayer();
     }
   }
