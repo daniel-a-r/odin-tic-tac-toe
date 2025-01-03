@@ -20,7 +20,9 @@ const game = (function () {
   const playersArray = [player1, player2];
   let currentPlayerIdx = 0;
   let winner = null;
-  let updateCount = 0;
+  let squaresFilled = 0;
+  let gameOver = false;
+  let gameStatus = 'In progress';
 
   const board = [[null, null, null],
                  [null, null, null],
@@ -35,8 +37,12 @@ const game = (function () {
     if (boardUpdated) {
       if (checkBoard(getCurrentPlayer().getMarker())) {
         setWinner(currentPlayerIdx);
+        gameOver = true;
+        gameStatus = `${getCurrentPlayer().getName()} won!`;
         console.log(`${getCurrentPlayer().getName()} won!`);
-      } else if (updateCount === 9) {
+      } else if (squaresFilled === 9) {
+        gameOver = true;
+        gameStatus = 'Tie!';
         console.log('tie');
       } else {
         updateCurrentPlayer();
@@ -45,9 +51,9 @@ const game = (function () {
   }
 
   const updateBoard = (marker, position) => {
-    if (getPositionValidity(position) && winner === null) {
+    if (getPositionValidity(position) && !gameOver) {
       board[position[0]][position[1]] = marker;
-      incUpdateCount();
+      incSquaresFilled();
       console.log('Board updated');
       printBoard();
       return true;
@@ -74,7 +80,7 @@ const game = (function () {
     return true;
   };
 
-  const incUpdateCount = () => updateCount++;
+  const incSquaresFilled = () => squaresFilled++;
 
   const checkBoard = (marker) => {
     if (checkRow(marker) || checkColumn(marker) || checkDiagonal(marker)) return true;
@@ -139,8 +145,12 @@ const game = (function () {
   };
 
   const resetGame = () => {
-    setWinner(null);
+    // setWinner(null);
+    gameOver = false;
+    gameStatus = 'In progress';
     resetBoard();
+    currentPlayerIdx = 0;
+    squaresFilled = 0;
   }
 
   const resetBoard = () => {
@@ -164,18 +174,23 @@ const game = (function () {
     console.log('current player:', { name: currentPlayer.getName(), marker: currentPlayer.getMarker() });
   }
 
+  const getGameStatus = () => gameStatus;
+
   return { player1, 
            player2,
            getCurrentPlayer,
            currentPlayerTurn, 
            printCurrentPlayer,
-           getBoard, 
+           getBoard,
+           getGameStatus,
            printBoard, 
            resetGame };
 })();
 
 const displayController = (function () {
   const squares = document.querySelectorAll('.square');
+  const newGameButton = document.querySelector('.new-game button');
+  const gameStatus = document.querySelector('.game-status');
 
   squares.forEach((square) => {
     square.addEventListener('click', () => {
@@ -184,6 +199,23 @@ const displayController = (function () {
       game.printCurrentPlayer();
       game.currentPlayerTurn([row, col]);
       square.textContent = game.getBoard()[row][col];
+      updateGameStatus();
     });
   });
+
+  newGameButton.addEventListener('click', () => {
+    console.log(newGameButton);
+    game.resetGame();
+    updateGameStatus();
+    squares.forEach((square) => {
+      square.textContent = null;
+    });
+  });
+
+  const updateGameStatus = () => {
+    const msg = 'Game status:';
+    gameStatus.textContent = `${msg} ${game.getGameStatus()}`;
+  };
+
+  updateGameStatus();
 })();
