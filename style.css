@@ -26,7 +26,7 @@ div {
   gap: 0.4rem;
 }
 
-.cell {
+.square {
   background-color: white;
   display: flex;
   justify-content: center;

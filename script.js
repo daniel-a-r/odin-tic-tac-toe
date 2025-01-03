@@ -175,29 +175,15 @@ const game = (function () {
 })();
 
 const displayController = (function () {
-  const cells = document.querySelectorAll('.cell');
+  const squares = document.querySelectorAll('.square');
 
-  cells.forEach((cell) => {
-    cell.addEventListener('click', (e) => {
-      const row = cell.dataset.row;
-      const col = cell.dataset.col;
+  squares.forEach((square) => {
+    square.addEventListener('click', () => {
+      const row = square.dataset.row;
+      const col = square.dataset.col;
       game.printCurrentPlayer();
+      game.currentPlayerTurn([row, col]);
+      square.textContent = game.getBoard()[row][col];
     });
   });
 })();
-
-// game.printCurrentPlayer();
-// game.printBoard();
-// game.currentPlayerTurn([0,1]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([0,0]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([1,2]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([1,0]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([0,2]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([2,0]);
-// game.printCurrentPlayer();
-// game.currentPlayerTurn([1,1]);
