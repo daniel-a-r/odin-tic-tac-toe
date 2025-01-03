@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+}
+
+div {
+  text-align: center;
+}
+
+.header {
+  font-size: 2rem;
+}
+
+.gameboard {
+  margin: 0 auto;
+  width: clamp(300px, 90%, 400px);
+  aspect-ratio: 1/1;
+  background-color: black;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+}
+
+.cell {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 4.5rem;
+}

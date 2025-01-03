@@ -15,8 +15,8 @@ function createPlayer(name, marker) {
 }
 
 const game = (function () {
-  const player1 = createPlayer('Player 1', 'x');
-  const player2 = createPlayer('Player 2', 'o');
+  const player1 = createPlayer('Player 1', 'X');
+  const player2 = createPlayer('Player 2', 'O');
   const playersArray = [player1, player2];
   let currentPlayerIdx = 0;
   let winner = null;
@@ -62,7 +62,7 @@ const game = (function () {
       console.log(`${invalidMsg}: row out of bounds`);
       return false;
     }
-    if (position[1] < 0 || position[0] > 2) {
+    if (position[1] < 0 || position[1] > 2) {
       console.log(`${invalidMsg}: column out of bounds`);
       return false;
     }
@@ -159,23 +159,45 @@ const game = (function () {
     return playersArray[currentPlayerIdx];
   }
 
+  const printCurrentPlayer = () => {
+    const currentPlayer = getCurrentPlayer();
+    console.log('current player:', { name: currentPlayer.getName(), marker: currentPlayer.getMarker() });
+  }
+
   return { player1, 
            player2,
            getCurrentPlayer,
            currentPlayerTurn, 
+           printCurrentPlayer,
            getBoard, 
            printBoard, 
            resetGame };
 })();
 
-game.currentPlayerTurn([1,1]);
-game.currentPlayerTurn([0,1]);
-game.currentPlayerTurn([0,1]);
-game.currentPlayerTurn([1,0]);
-game.currentPlayerTurn([2,1]);
-game.currentPlayerTurn([1,2]);
-game.currentPlayerTurn([0,2]);
-game.resetGame();
-game.printBoard();
-game.currentPlayerTurn([1,1]);
-game.currentPlayerTurn([0,1]);
+const displayController = (function () {
+  const cells = document.querySelectorAll('.cell');
+
+  cells.forEach((cell) => {
+    cell.addEventListener('click', (e) => {
+      const row = cell.dataset.row;
+      const col = cell.dataset.col;
+      game.printCurrentPlayer();
+    });
+  });
+})();
+
+// game.printCurrentPlayer();
+// game.printBoard();
+// game.currentPlayerTurn([0,1]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([0,0]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([1,2]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([1,0]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([0,2]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([2,0]);
+// game.printCurrentPlayer();
+// game.currentPlayerTurn([1,1]);
