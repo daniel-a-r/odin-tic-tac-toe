@@ -19,7 +19,6 @@ const game = (function () {
   const player2 = createPlayer('Player 2', 'O');
   const playersArray = [player1, player2];
   let currentPlayerIdx = 0;
-  let winner = null;
   let squaresFilled = 0;
   let gameOver = false;
   let gameStatus = 'In progress';
@@ -165,6 +164,8 @@ const game = (function () {
     currentPlayerIdx = (currentPlayerIdx) ? 0 : 1;
   };
 
+  const getPlayer = (indx) => playersArray[indx];
+
   const getCurrentPlayer = () => {
     return playersArray[currentPlayerIdx];
   }
@@ -176,8 +177,7 @@ const game = (function () {
 
   const getGameStatus = () => gameStatus;
 
-  return { player1, 
-           player2,
+  return { getPlayer,
            getCurrentPlayer,
            currentPlayerTurn, 
            printCurrentPlayer,
@@ -188,9 +188,26 @@ const game = (function () {
 })();
 
 const displayController = (function () {
+  const updateGameStatus = () => {
+    const gameStatus = document.querySelector('.game-status');
+    if (game.getGameStatus() === 'In progress') {
+      gameStatus.textContent = null;
+    } else {
+      gameStatus.textContent = `Game over. ${game.getGameStatus()}`;
+    }
+  };
+
+  const setPlayerName = (playerIndx, newName) => {
+    const playerName = document.querySelector(`[data-player='${playerIndx}'] .player-name`);
+    playerName.textContent = newName;
+  }
+
   const squares = document.querySelectorAll('.square');
   const newGameButton = document.querySelector('.new-game button');
-  const gameStatus = document.querySelector('.game-status');
+  const openModalButtons = document.querySelectorAll('.open-modal');
+  const closeModalButton = document.querySelector('.close-modal');
+  const modal = document.querySelector('dialog');
+  const form = document.querySelector('form');
 
   squares.forEach((square) => {
     square.addEventListener('click', () => {
@@ -204,7 +221,6 @@ const displayController = (function () {
   });
 
   newGameButton.addEventListener('click', () => {
-    console.log(newGameButton);
     game.resetGame();
     updateGameStatus();
     squares.forEach((square) => {
@@ -212,10 +228,33 @@ const displayController = (function () {
     });
   });
 
-  const updateGameStatus = () => {
-    const msg = 'Game status:';
-    gameStatus.textContent = `${msg} ${game.getGameStatus()}`;
-  };
+  openModalButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const playerIndx = button.parentElement.dataset.player
+      const currentName = document.querySelector('.current-name');
+      currentName.textContent = game.getPlayer(playerIndx).getName();
+      form.dataset.player = button.parentElement.dataset.player;
+      modal.showModal();
+    });
+  });
+
+  closeModalButton.addEventListener('click', () => {
+    modal.close();
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const playerIndx = form.dataset.player;
+    const input = document.querySelector('input');
+    game.getPlayer(playerIndx).setName(input.value);
+    setPlayerName(playerIndx, game.getPlayer(playerIndx).getName());
+    form.reset();
+    modal.close();
+  });
+
+  for (let i = 0; i < 2; i++) {
+    setPlayerName(i, game.getPlayer(i).getName());
+  }
 
   updateGameStatus();
 })();
